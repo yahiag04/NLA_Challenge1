@@ -1,5 +1,11 @@
 # Challenge 1 — Image Filtering and Denoising
 
+## Overview
+
+This project is part of a Numerical Linear Algebra assignment on image filtering and denoising. It uses a grayscale deer image to explore convolution filters for smoothing, sharpening, and edge detection. The assignment also represents these operations as sparse matrix-vector products and uses the Eigen and LIS libraries to solve linear systems iteratively.
+
+The current `challenge.cpp` implementation covers the first two tasks: loading the image into an Eigen matrix, adding random noise, and exporting the noisy image as a PNG. The remaining tasks are intended to be completed collaboratively by the team.
+
 This project uses the course image `quay.io/pjbaioni/amsc_mk:2025`. The container provides the scientific computing environment; the team will write the assignment code in `challenge.cpp`.
 
 Keep the input image (`deer.jpg`) in the project directory. The stb headers are organized in the `stb/` subdirectory. Mount this directory in the container as `/shared-folder` so that source files, input images, and generated results are shared with the host computer.
