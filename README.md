@@ -2,7 +2,7 @@
 
 This project uses the course image `quay.io/pjbaioni/amsc_mk:2025`. The container provides the scientific computing environment; the team will write the assignment code in `challenge.cpp`.
 
-Keep the input image (`deer.jpeg`), `stb_image.h`, and `stb_image_write.h` in the project directory. Mount this directory in the container as `/shared-folder` so that source files, input images, and generated results are shared with the host computer.
+Keep the input image (`deer.jpg`) in the project directory. The stb headers are organized in the `stb/` subdirectory. Mount this directory in the container as `/shared-folder` so that source files, input images, and generated results are shared with the host computer.
 
 ## macOS (Docker)
 
