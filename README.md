@@ -1,18 +1,18 @@
-# Challenge 1 — Image filtering and denoising
+# Challenge 1 — Image Filtering and Denoising
 
-Il progetto usa l'immagine del corso `quay.io/pjbaioni/amsc_mk:2025`. Il container include l'ambiente scientifico; il codice dell'esercizio va scritto in `challenge.cpp` dal team.
+This project uses the course image `quay.io/pjbaioni/amsc_mk:2025`. The container provides the scientific computing environment; the team will write the assignment code in `challenge.cpp`.
 
-L'immagine `deer.jpg`, `stb_image.h` e `stb_image_write.h` devono trovarsi nella cartella del progetto. Il container deve montare questa cartella come `/shared-folder`, così sorgenti, immagini e risultati sono condivisi con il computer host.
+Keep the input image (`deer.jpeg`), `stb_image.h`, and `stb_image_write.h` in the project directory. Mount this directory in the container as `/shared-folder` so that source files, input images, and generated results are shared with the host computer.
 
 ## macOS (Docker)
 
-Installa e avvia Docker Desktop. Dal Terminale del Mac, scarica l'immagine del corso:
+Install and start Docker Desktop. In the Mac Terminal, download the course image:
 
 ```bash
 docker pull quay.io/pjbaioni/amsc_mk:2025
 ```
 
-Crea il container `amsc`, collegando la directory del progetto a `/shared-folder` nel container. Sostituisci il percorso qui sotto se la cartella del progetto è in un'altra posizione:
+Create the `amsc` container and mount the project directory at `/shared-folder`. Replace the path below if your project is stored elsewhere:
 
 ```bash
 docker run --platform linux/amd64 -it --name amsc \
@@ -20,28 +20,28 @@ docker run --platform linux/amd64 -it --name amsc \
   quay.io/pjbaioni/amsc_mk:2025 /bin/bash
 ```
 
-Se il Mac ha un processore Intel, puoi rimuovere `--platform linux/amd64`. Per gli accessi successivi, dal Terminale del Mac esegui:
+On an Intel Mac, you can omit `--platform linux/amd64`. To enter the container again later, run these commands in the Mac Terminal:
 
 ```bash
 docker start amsc
 docker exec -it amsc /bin/bash
 ```
 
-Non usare di nuovo `docker run` se il container `amsc` esiste già: per entrare si usano `docker start` e `docker exec`.
+Do not run `docker run` again once the `amsc` container has been created. Use `docker start` and `docker exec` to reopen it.
 
 ## Windows (WSL2 + Ubuntu + Apptainer)
 
-Le istruzioni del corso raccomandano WSL con Ubuntu 24.04. Installa WSL da PowerShell (come amministratore), poi apri Ubuntu:
+The course recommends using WSL with Ubuntu 24.04. Install WSL from PowerShell (as Administrator), then open Ubuntu:
 
 ```powershell
 wsl --install -d Ubuntu-24.04
 ```
 
-Nel terminale Ubuntu installa Apptainer seguendo i comandi Linux sotto. I file Windows sono accessibili da `/mnt/c`; per esempio `C:\Users\Nome\Documents\NLA_Challenge1` diventa `/mnt/c/Users/Nome/Documents/NLA_Challenge1`. È preferibile lavorare in una directory del filesystem Linux, ad esempio `~/NLA_Challenge1`, per prestazioni migliori.
+In the Ubuntu terminal, install Apptainer using the Linux instructions below. Windows files are available under `/mnt/c`; for example, `C:\Users\Name\Documents\NLA_Challenge1` maps to `/mnt/c/Users/Name/Documents/NLA_Challenge1`. For better performance, it is preferable to work in the Linux filesystem, for example `~/NLA_Challenge1`.
 
 ## Linux (Apptainer)
 
-Installa Apptainer. Su Ubuntu:
+Install Apptainer. On Ubuntu:
 
 ```bash
 sudo apt update
@@ -51,23 +51,23 @@ sudo apt update
 sudo apt install -y apptainer
 ```
 
-Scarica l'immagine del corso una volta:
+Download the course image once:
 
 ```bash
 apptainer pull docker://quay.io/pjbaioni/amsc_mk:2025
 ```
 
-Questo crea `amsc_mk_2025.sif` nella directory corrente. Per avviare una shell con la directory corrente accessibile nel container:
+This creates `amsc_mk_2025.sif` in the current directory. Start a shell and bind the current directory into the container as `/shared-folder`:
 
 ```bash
 apptainer shell --bind "$PWD:/shared-folder" amsc_mk_2025.sif
 ```
 
-Se il file SIF è in un'altra directory, indica il suo percorso completo.
+If the SIF file is in another directory, provide its full path.
 
-## Preparazione e compilazione (Windows/WSL o Linux)
+## Environment and compilation (Windows/WSL or Linux)
 
-Una volta dentro il container, carica l'ambiente e vai nella cartella condivisa:
+Once inside the container, load the environment and enter the shared project directory:
 
 ```bash
 source /u/sw/etc/bash.bashrc
@@ -75,21 +75,21 @@ module load gcc-glibc
 cd /shared-folder
 ```
 
-LIS è fornito nell'immagine del corso. Carica il modulo se disponibile:
+LIS is included in the course image. Load its module if available:
 
 ```bash
 module avail lis
 module load lis
 ```
 
-Quando `challenge.cpp` sarà implementato, compila con Eigen e LIS. Se il modulo LIS imposta le variabili standard `mkLisInc` e `mkLisLib`:
+When `challenge.cpp` is implemented, compile it with Eigen and LIS. If the LIS module defines the standard `mkLisInc` and `mkLisLib` variables, use:
 
 ```bash
 g++ -O2 -std=c++17 -I"$mkEigenInc" -I"$mkLisInc" challenge.cpp \
   -L"$mkLisLib" -Wl,-rpath,"$mkLisLib" -llis -o challenge
 ```
 
-Se le variabili non sono definite, nel container del corso LIS 2.0.30 è installato qui:
+If those variables are not defined, LIS 2.0.30 is installed at this path in the course container:
 
 ```bash
 g++ -O2 -std=c++17 -I"$mkEigenInc" \
@@ -99,17 +99,16 @@ g++ -O2 -std=c++17 -I"$mkEigenInc" \
   -llis -o challenge
 ```
 
-Avvia il programma passando l'immagine:
+Run the program with the input image:
 
 ```bash
-./challenge deer.jpg
+./challenge deer.jpeg
 ```
 
-I file generati nella directory `/shared-folder` saranno disponibili anche nella cartella del progetto sul computer host.
+Files generated in `/shared-folder` will also be available in the project directory on the host computer.
 
-## Riferimenti
+## References
 
-- `Challenge1.pdf`: consegna e filtri richiesti.
-- Materiale `Lab0/Lab0a_SetUp.md`: setup Linux/Windows e container del corso.
-- Materiale `Lab1/Lab1_IntroEigen.md`: Eigen e gestione immagini con stb.
-# NLA_Challenge1
+- `Challenge1.pdf`: assignment requirements and filters.
+- `Lab0/Lab0a_SetUp.md`: Linux and Windows setup and course container instructions.
+- `Lab1/Lab1_IntroEigen.md`: Eigen and image handling with stb.
