@@ -54,16 +54,40 @@ int main() {
 
     if(stbi_write_png("noisy_deer.png", width, height, 1, noisyData, width) == 0) {
         printf("Error writing image");
-        delete[] noisyData;
         stbi_image_free(data);
         return 1;
     }else {
         printf("Noisy image saved successfully as noisy_deer.png\n");
     }
 
-    delete[] noisyData;
 
 
+    //TASK3: Image remodelling and euclidean norm calculation
+
+    Eigen::VectorXd v(width * height);
+    Eigen::VectorXd w(width * height);
+
+    for(int i=0; i<height; i++) {
+        for(int j=0; j<width; j++) {
+            v(i * width + j) = image(i, j);
+            w(i * width + j) = noisyImage(i, j);
+        }
+    }
+
+    printf("v size: %ld\n", v.size());
+    printf("w size: %ld\n", w.size());
+
+    if(v.size() != w.size() || v.size() != width * height || w.size() != width * height) {
+        printf("Error: v and w must be of the same size for norm calculation\n");
+        stbi_image_free(data);
+        return 1;
+    }
+
+    //norm calculation
+    double euclideanNorm = v.norm();
+    printf("Euclidean norm of v: %f\n", euclideanNorm);
+
+    
 
 
     stbi_image_free(data);
