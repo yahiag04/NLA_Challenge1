@@ -136,6 +136,24 @@ int main() {
         printf("A2 is not symmetric\n");
     }
 
+    //Task 7
+    VectorXd sharpened_image = A2 * v;
+
+    for(int i=0; i<height * width; i++) {
+        if(sharpened_image[i] < 0) sharpened_image[i] = 0;
+        if(sharpened_image[i] > 255) sharpened_image[i] = 255;
+
+        tmp[i] = static_cast<unsigned char>(sharpened_image[i]);
+    }
+
+    if(stbi_write_png("sharpened_deer.png", width, height, 1, tmp, width) == 0) {
+        printf("Error writing image");
+        stbi_image_free(data);
+        return 1;
+    }else {
+        printf("Sharpened image saved successfully as sharpened_deer.png\n");
+    }
+
 
     stbi_image_free(data);
     return 0;
