@@ -7,6 +7,9 @@
 #include <cstdio>
 #include <cstdlib>
 
+using namespace Eigen;
+
+
 int main() {
 
     //task1: Image loading and conversion to Eigen Matrix
@@ -20,7 +23,7 @@ int main() {
 
     printf("Image loaded successfully: %dx%d, %d channels\n", width, height, channels); 
 
-    Eigen::MatrixXd image(height, width);
+    MatrixXd image(height, width);
 
 
     for(int i=0; i<height; i++) {
@@ -33,7 +36,7 @@ int main() {
 
     //task2
 
-    Eigen::MatrixXd noisyImage = image; // Create a copy of the original image
+    MatrixXd noisyImage = image; // Create a copy of the original image
 
     for(int i=0; i<height; i++) {
         for(int j=0; j<width; j++) {
@@ -64,8 +67,8 @@ int main() {
 
     //TASK3: Image remodelling and euclidean norm calculation
 
-    Eigen::VectorXd v(width * height);
-    Eigen::VectorXd w(width * height);
+    VectorXd v(width * height);
+    VectorXd w(width * height);
 
     for(int i=0; i<height; i++) {
         for(int j=0; j<width; j++) {
@@ -89,7 +92,70 @@ int main() {
 
     
 
+    /*TASK4:  Write the convolution operation corresponding to the smoothing kernel Hav1 as a matrix
+        vector multiplication between a matrix A1 having size mnxmn and the image vector.
+        Report the number of non-zero entries in A1*/
+
+    SparseMatrix<double> A1 = create_convolution_matrix(create_filter("av1"), height, width);
+    
+    printf("Non-zero entries in A1: %ld\n", A1.nonZeros());
+    
+
+
+
+
 
     stbi_image_free(data);
     return 0;
+}
+
+
+
+SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int height, const int width){
+    int n = height*width;
+    SparseMatrix<double> A(n, n);
+
+
+
+    
+    for(int i = 0; i < n; i++){
+        int row = i / width;
+        int col = i % width;
+
+        for(int k = -1; k <= 1; k++){
+            for(int h = -1; h <= 1; h++){
+                int image_r = row + k;
+                int image_c = col + h;
+
+                if((image_r >= 0 && image_r < height) && (image_c >= 0 && image_c < width)){
+                    int col_A = image_r * width + image_c;
+                    
+                    A.insert(i, col_A) = filter(k+1, h+1);
+                }
+            }
+        }
+    }
+
+    return A;
+}
+
+
+MatrixXd create_filter(const std::string &filter_name){
+    MatrixXd filter = MatrixXd::Zero(3, 3);
+
+    if(filter_name == "av1"){
+        filter(0, 0) = 1.0;
+        filter(0, 1) = 1.0;
+        filter(0, 2) = 1.0;
+        filter(1, 0) = 1.0;
+        filter(1, 1) = 4.0;
+        filter(1, 2) = 1.0;
+        filter(2, 0) = 1.0;
+        filter(2, 1) = 1.0;
+        filter(2, 2) = 1.0;
+        filter = filter / 12.0;
+        return filter;
+    }
+
+    throw std::invalid_argument("Filtro sconosciuto: " + filter_name);
 }
