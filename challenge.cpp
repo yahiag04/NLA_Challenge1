@@ -102,7 +102,7 @@ int main() {
         vector multiplication between a matrix A1 having size mnxmn and the image vector.
         Report the number of non-zero entries in A1*/
 
-    SparseMatrix<double> A1 = create_convolution_matrix(create_filter("av1"), height, width);
+    SparseMatrix A1 = create_convolution_matrix(create_filter("av1"), height, width);
     
     printf("Non-zero entries in A1: %ld\n", A1.nonZeros());
 
@@ -122,6 +122,19 @@ int main() {
         printf("Noisy image saved successfully as smoothed_noisy_deer.png\n");
     }
     
+
+
+
+    //Task 6
+    SparseMatrix A2 = create_convolution_matrix(create_filter("sh1"), height, width);
+
+    printf("Non-zero entries in A2: %ld\n", A2.nonZeros());
+
+    if(A2.isApprox(A2.transpose())){
+        printf("A2 is symmetric\n");
+    } else {
+        printf("A2 is not symmetric\n");
+    }
 
 
     stbi_image_free(data);
@@ -173,6 +186,13 @@ MatrixXd create_filter(const std::string &filter_name){
         filter(2, 1) = 1.0;
         filter(2, 2) = 1.0;
         filter = filter / 12.0;
+        return filter;
+    }else if(filter_name == "sh1"){
+        filter(0, 1) = -3.0;
+        filter(1, 0) = -1.0;
+        filter(1, 1) = 9.0;
+        filter(1, 2) = -3.0;
+        filter(2, 1) = -1.0;
         return filter;
     }
 
