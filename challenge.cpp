@@ -3,11 +3,18 @@
 #include "stb/stb_image.h"
 #include "stb/stb_image_write.h"
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <vector>
 
 #include <cstdio>
 #include <cstdlib>
 
 using namespace Eigen;
+
+
+SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int height, const int width);
+MatrixXd create_filter(const std::string &filter_name);
+
 
 
 int main() {
@@ -88,10 +95,9 @@ int main() {
 
     //norm calculation
     double euclideanNorm = v.norm();
+
     printf("Euclidean norm of v: %f\n", euclideanNorm);
-
     
-
     /*TASK4:  Write the convolution operation corresponding to the smoothing kernel Hav1 as a matrix
         vector multiplication between a matrix A1 having size mnxmn and the image vector.
         Report the number of non-zero entries in A1*/
@@ -99,10 +105,23 @@ int main() {
     SparseMatrix<double> A1 = create_convolution_matrix(create_filter("av1"), height, width);
     
     printf("Non-zero entries in A1: %ld\n", A1.nonZeros());
+
+    //Task 5
+    VectorXd smoothed_noisy_deer = A1 * w;
+    unsigned char *tmp = new unsigned char[width * height];
+
+    for(int i=0; i<height * width; i++) {
+            tmp[i] = static_cast<unsigned char>(smoothed_noisy_deer[i]);
+    }
+
+    if(stbi_write_png("smoothed_noisy_deer.png", width, height, 1, tmp, width) == 0) {
+        printf("Error writing image");
+        stbi_image_free(data);
+        return 1;
+    }else {
+        printf("Noisy image saved successfully as smoothed_noisy_deer.png\n");
+    }
     
-
-
-
 
 
     stbi_image_free(data);
@@ -110,14 +129,12 @@ int main() {
 }
 
 
-
 SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int height, const int width){
-    int n = height*width;
+    int n = height * width;
     SparseMatrix<double> A(n, n);
+    std::vector<Triplet<double>> triplets;
+    triplets.reserve(n * 9);
 
-
-
-    
     for(int i = 0; i < n; i++){
         int row = i / width;
         int col = i % width;
@@ -129,15 +146,17 @@ SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int
 
                 if((image_r >= 0 && image_r < height) && (image_c >= 0 && image_c < width)){
                     int col_A = image_r * width + image_c;
-                    
-                    A.insert(i, col_A) = filter(k+1, h+1);
+                    triplets.push_back(Triplet<double>(i, col_A, filter(k+1, h+1)));
                 }
             }
         }
     }
 
+    A.setFromTriplets(triplets.begin(), triplets.end());
     return A;
 }
+
+
 
 
 MatrixXd create_filter(const std::string &filter_name){
