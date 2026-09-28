@@ -175,7 +175,7 @@ SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int
                 int image_r = row + k;
                 int image_c = col + h;
 
-                if((image_r >= 0 && image_r < height) && (image_c >= 0 && image_c < width)){
+                if((image_r >= 0 && image_r < height) && (image_c >= 0 && image_c < width && filter(k + 1, h + 1) != 0.0)){
                     int col_A = image_r * width + image_c;
                     triplets.push_back(Triplet<double>(i, col_A, filter(k+1, h+1)));
                 }
