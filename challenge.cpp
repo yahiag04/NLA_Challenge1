@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <vector>
+#include <unsupported/Eigen/SparseExtra>
 
 #include <cstdio>
 #include <cstdlib>
@@ -155,6 +156,14 @@ int main() {
     }
 
 
+
+    // Task 8: export A2 and w in Matrix Market format.
+    if(saveMarketVector(w, "w.mtx") && saveMarket(A2, "A2.mtx")){
+        printf("Files saved successfully: w.mtx and A2.mtx\n");
+    } else {
+        printf("Error saving files\n"); 
+    }
+
     stbi_image_free(data);
     return 0;
 }
@@ -185,6 +194,8 @@ SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int
 
     A.setFromTriplets(triplets.begin(), triplets.end());
     return A;
+
+
 }
 
 
@@ -215,4 +226,7 @@ MatrixXd create_filter(const std::string &filter_name){
     }
 
     throw std::invalid_argument("Filtro sconosciuto: " + filter_name);
+
+
+
 }
