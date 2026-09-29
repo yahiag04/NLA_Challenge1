@@ -199,7 +199,16 @@ int main() {
 
 
 
-    
+    //Task 10
+    SparseMatrix A3 = create_convolution_matrix(create_filter("ed2"), height, width);
+
+    if(A3.isApprox(A3.transpose())){
+        printf("A3 is symmetric\n");
+    } else {
+        printf("A3 is not symmetric\n");
+    }
+
+
 
     stbi_image_free(data);
     return 0;
@@ -259,6 +268,14 @@ MatrixXd create_filter(const std::string &filter_name){
         filter(1, 1) = 9.0;
         filter(1, 2) = -3.0;
         filter(2, 1) = -1.0;
+        return filter;
+    }else if(filter_name == "ed2"){
+        filter(0, 0) = -1;
+        filter(0, 2) = 1;
+        filter(1, 0) = -2;
+        filter(1, 2) = 2;
+        filter(2, 0) = -1;
+        filter(2, 2) = 1;
         return filter;
     }
 
