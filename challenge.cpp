@@ -209,6 +209,25 @@ int main() {
     }
 
 
+    //Task 11
+    VectorXd edge_detected_image = A3 * v;
+
+    for(int i=0; i<height * width; i++) {
+        if(edge_detected_image[i] < 0) edge_detected_image[i] = 0;
+        if(edge_detected_image[i] > 255) edge_detected_image[i] = 255;
+
+        tmp[i] = static_cast<unsigned char>(edge_detected_image[i]);
+    }
+
+    if(stbi_write_png("edge_detected_deer.png", width, height, 1, tmp, width) == 0) {
+        printf("Error writing image");
+        stbi_image_free(data);
+        return 1;
+    }else {
+        printf("Edge detected image saved successfully as edge_detected_deer.png\n");
+    }
+
+    
 
     stbi_image_free(data);
     return 0;
