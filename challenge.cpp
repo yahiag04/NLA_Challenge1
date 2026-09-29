@@ -9,6 +9,8 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
+#include <fstream>
 
 using namespace Eigen;
 
@@ -163,6 +165,41 @@ int main() {
     } else {
         printf("Error saving files\n"); 
     }
+
+    // BiCGSTAB + ILU(0): 18 iterations
+    // Final residual: 2.426823e-13 (tolerance 1e-12)
+
+
+    //TASK9: solution x to PNG 
+
+    std::ifstream xFile("x.mtx");
+    std::string banner;
+    std::getline(xFile, banner);
+
+    int n;
+    if (xFile >> n && n == width * height) {
+        std::vector<unsigned char> pixels(n, 0);
+        int index;
+        double value;
+
+        while (xFile >> index >> value) {
+            if (index >= 1 && index <= n) {
+                if (value < 0) value = 0;
+                if (value > 255) value = 255;
+                pixels[index - 1] = static_cast<unsigned char>(std::lround(value));
+            }
+        }
+
+        stbi_write_png("solution_deer.png", width, height, 1,
+                    pixels.data(), width);
+        printf("Solution image saved as solution_deer.png\n");
+    } else {
+        printf("Cannot read x.mtx or its size is incorrect\n");
+    }
+
+
+
+    
 
     stbi_image_free(data);
     return 0;
