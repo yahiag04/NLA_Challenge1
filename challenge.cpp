@@ -15,7 +15,7 @@
 using namespace Eigen;
 
 
-SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int height, const int width);
+SparseMatrix<double, ColMajor> create_convolution_matrix(const MatrixXd &filter, const int height, const int width);
 MatrixXd create_filter(const std::string &filter_name);
 
 
@@ -105,7 +105,7 @@ int main() {
         vector multiplication between a matrix A1 having size mnxmn and the image vector.
         Report the number of non-zero entries in A1*/
 
-    SparseMatrix A1 = create_convolution_matrix(create_filter("av1"), height, width);
+    SparseMatrix<double, ColMajor> A1 = create_convolution_matrix(create_filter("av1"), height, width);
     
     printf("Non-zero entries in A1: %ld\n", A1.nonZeros());
 
@@ -129,7 +129,7 @@ int main() {
 
 
     //Task 6
-    SparseMatrix A2 = create_convolution_matrix(create_filter("sh1"), height, width);
+    SparseMatrix<double, ColMajor> A2 = create_convolution_matrix(create_filter("sh1"), height, width);
 
     printf("Non-zero entries in A2: %ld\n", A2.nonZeros());
 
@@ -234,9 +234,9 @@ int main() {
 }
 
 
-SparseMatrix<double> create_convolution_matrix(const MatrixXd &filter, const int height, const int width){
+SparseMatrix<double, ColMajor> create_convolution_matrix(const MatrixXd &filter, const int height, const int width){
     int n = height * width;
-    SparseMatrix<double> A(n, n);
+    SparseMatrix<double, ColMajor> A(n, n);
     std::vector<Triplet<double>> triplets;
     triplets.reserve(n * 9);
 
