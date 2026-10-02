@@ -36,6 +36,17 @@ The task 9 image requires the LIS solver output `x.mtx` to be present in the wor
 12. **Solve with Eigen.** Build `B = 4I + A3` and solve `B y = w` using Eigen BiCGSTAB with an IncompleteLUT preconditioner and tolerance `10^-10`. The program reports the iteration count and the relative final residual, `||By - w||₂ / ||w||₂`. In the recorded run these were 2 iterations and `4.201610469311e-11`.
 13. **Render the Eigen solution.** Convert the Eigen vector `y` directly to grayscale pixels, clamp values to 0–255, and save `solution_y.png`.
 
+## Results
+
+The following results were obtained for the 656 × 656 deer image:
+
+| Task | System and method | Tolerance | Iterations | Final relative residual | Output |
+| --- | --- | ---: | ---: | ---: | --- |
+| 8 | `A2 x = w`; LIS BiCGSTAB with ILU(0) preconditioning | `1.0e-12` | 18 | `2.426823e-13` | `x.mtx`, rendered as `solution_deer.png` |
+| 12 | `(4I + A3)y = w`; Eigen BiCGSTAB with IncompleteLUT preconditioning | `1.0e-10` | 2 | `4.201610469311e-11` | `solution_y.png` |
+
+These are the iteration counts and residuals reported by the recorded run. The task 12 residual is computed as `||By - w||₂ / ||w||₂`.
+
 ## Run with Docker on macOS
 
 Install and start Docker Desktop, then download the course image:
