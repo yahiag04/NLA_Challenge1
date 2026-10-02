@@ -4,9 +4,11 @@
 #include "stb/stb_image_write.h"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+#include <Eigen/IterativeLinearSolvers>
 #include <vector>
 #include <unsupported/Eigen/SparseExtra>
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -227,6 +229,52 @@ int main() {
         printf("Edge detected image saved successfully as edge_detected_deer.png\n");
     }
 
+
+    // Task 12: solve (4I + A3)y = w with Eigen's BiCGSTAB solver.
+    SparseMatrix<double, ColMajor> I(A3.rows(), A3.cols());
+    I.setIdentity();
+
+    SparseMatrix<double, ColMajor> B = 4.0 * I + A3;
+    BiCGSTAB<SparseMatrix<double, ColMajor>, IncompleteLUT<double>> solver;
+    solver.setTolerance(1e-10);
+    solver.compute(B);
+    if (solver.info() != Success) {
+        fprintf(stderr, "Error preparing the Eigen solver\n");
+        stbi_image_free(data);
+        delete[] noisyData;
+        delete[] tmp;
+        return 1;
+    }
+
+    VectorXd y = solver.solve(w);
+    if (solver.info() != Success) {
+        fprintf(stderr, "Eigen solver did not converge (status %d)\n", solver.info());
+        stbi_image_free(data);
+        delete[] noisyData;
+        delete[] tmp;
+        return 1;
+    }
+
+    const double finalResidual = (B * y - w).norm() / w.norm();
+    printf("Iterations: %d\n", solver.iterations());
+    printf("Final residual: %.12e\n", finalResidual);
+
+    // Task 13: convert the Eigen solution vector y directly to a grayscale PNG.
+    for (Eigen::Index i = 0; i < y.size(); ++i) {
+        const double pixel = std::max(0.0, std::min(255.0, y[i]));
+        tmp[i] = static_cast<unsigned char>(std::lround(pixel));
+    }
+    if (stbi_write_png("solution_y.png", width, height, 1, tmp, width) == 0) {
+        fprintf(stderr, "Error writing solution_y.png\n");
+        stbi_image_free(data);
+        delete[] noisyData;
+        delete[] tmp;
+        return 1;
+    }
+    printf("Task 13: solution saved as solution_y.png\n");
+
+    delete[] noisyData;
+    delete[] tmp;
     
 
     stbi_image_free(data);
