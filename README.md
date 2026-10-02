@@ -47,41 +47,30 @@ The following results were obtained for the 656 × 656 deer image:
 
 These are the iteration counts and residuals reported by the recorded run. The task 12 residual is computed as `||By - w||₂ / ||w||₂`.
 
-### Noisy image
+### Result images
 
-The original deer image after adding random noise (task 2).
-
-![Noisy deer image](noisy_deer.png)
-
-### Smoothed noisy image
-
-The noisy image after applying the `Hav1` average-smoothing filter (task 5).
-
-![Smoothed noisy deer image](smoothed_noisy_deer.png)
-
-### Sharpened image
-
-The original image after applying the `Hsh1` sharpening filter (task 7).
-
-![Sharpened deer image](sharpened_deer.png)
-
-### LIS solution image
-
-The solution vector `x` for `A2 x = w`, computed with LIS and converted to grayscale (task 9).
-
-![LIS solution image](solution_deer.png)
-
-### Edge-detected image
-
-The original image after applying the `Hed2` Sobel edge-detection filter (task 11).
-
-![Edge-detected deer image](edge_detected_deer.png)
-
-### Eigen solution image
-
-The solution vector `y` for `(4I + A3)y = w`, computed with Eigen and converted to grayscale (task 13).
-
-![Eigen solution image](solution_y.png)
+<table>
+  <tr>
+    <td align="center"><img src="noisy_deer.png" width="200" alt="Noisy deer image"></td>
+    <td align="center"><img src="smoothed_noisy_deer.png" width="200" alt="Smoothed noisy deer image"></td>
+    <td align="center"><img src="sharpened_deer.png" width="200" alt="Sharpened deer image"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Noisy image</strong><br>Task 2: random noise added.</td>
+    <td align="center"><strong>Smoothed noisy image</strong><br>Task 5: `Hav1` applied.</td>
+    <td align="center"><strong>Sharpened image</strong><br>Task 7: `Hsh1` applied.</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="solution_deer.png" width="200" alt="LIS solution image"></td>
+    <td align="center"><img src="edge_detected_deer.png" width="200" alt="Edge-detected deer image"></td>
+    <td align="center"><img src="solution_y.png" width="200" alt="Eigen solution image"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>LIS solution</strong><br>Task 9: solution `x` rendered as an image.</td>
+    <td align="center"><strong>Edge detection</strong><br>Task 11: `Hed2` applied.</td>
+    <td align="center"><strong>Eigen solution</strong><br>Task 13: solution `y` rendered as an image.</td>
+  </tr>
+</table>
 
 ## Run with Docker on macOS
 
