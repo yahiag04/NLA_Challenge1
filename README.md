@@ -47,6 +47,42 @@ The following results were obtained for the 656 × 656 deer image:
 
 These are the iteration counts and residuals reported by the recorded run. The task 12 residual is computed as `||By - w||₂ / ||w||₂`.
 
+### Noisy image
+
+The original deer image after adding random noise (task 2).
+
+![Noisy deer image](noisy_deer.png)
+
+### Smoothed noisy image
+
+The noisy image after applying the `Hav1` average-smoothing filter (task 5).
+
+![Smoothed noisy deer image](smoothed_noisy_deer.png)
+
+### Sharpened image
+
+The original image after applying the `Hsh1` sharpening filter (task 7).
+
+![Sharpened deer image](sharpened_deer.png)
+
+### LIS solution image
+
+The solution vector `x` for `A2 x = w`, computed with LIS and converted to grayscale (task 9).
+
+![LIS solution image](solution_deer.png)
+
+### Edge-detected image
+
+The original image after applying the `Hed2` Sobel edge-detection filter (task 11).
+
+![Edge-detected deer image](edge_detected_deer.png)
+
+### Eigen solution image
+
+The solution vector `y` for `(4I + A3)y = w`, computed with Eigen and converted to grayscale (task 13).
+
+![Eigen solution image](solution_y.png)
+
 ## Run with Docker on macOS
 
 Install and start Docker Desktop, then download the course image:
