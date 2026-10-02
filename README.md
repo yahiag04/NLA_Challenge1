@@ -52,14 +52,14 @@ docker run --platform linux/amd64 -it --name amsc \
   quay.io/pjbaioni/amsc_mk:2025 /bin/bash
 ```
 
-On an Intel Mac, `--platform linux/amd64` can be omitted. To reopen the container later, run these commands from the Mac Terminal:
+On an Intel Mac, `--platform linux/amd64` can be omitted. The `docker run` command creates the container only the first time. To start that existing container later and open a shell, run these commands from the Mac Terminal:
 
 ```bash
 docker start amsc
 docker exec -it amsc /bin/bash
 ```
 
-Inside the container, compile and run the program:
+Inside the container, compile the program and run it once to generate `A2.mtx` and `w.mtx`:
 
 ```bash
 source /u/sw/etc/bash.bashrc
@@ -69,7 +69,16 @@ g++ -O2 -std=c++17 -I"$mkEigenInc" challenge.cpp -o challenge
 ./challenge
 ```
 
-The generated PNG and Matrix Market files will appear in the project directory on the host. To complete task 8 and generate the task 9 image, run `challenge` once to create `A2.mtx` and `w.mtx`; then load the LIS module if needed (`module load lis`) and use LIS to solve the system, saving the solution as `x.mtx`. Run `challenge` again to read `x.mtx` and create `solution_deer.png`.
+The generated PNG and Matrix Market files will appear in the project directory on the host. To complete task 8, load LIS and solve `A2 x = w` from the same `/shared-folder` directory:
+
+```bash
+module avail lis
+module load lis
+lsolve A2.mtx w.mtx x.mtx rhistory.txt \
+  -i bicgstab -p ilu -tol 1.0e-12 -print out
+```
+
+`lsolve` writes the solution to `x.mtx` and the residual history to `rhistory.txt`. The options select BiCGSTAB, ILU(0) (the default ILU fill level), a tolerance of `1.0e-12`, and residual output. Then run `./challenge` again to load `x.mtx` and generate `solution_deer.png`. For later sessions, start the stopped container with `docker start amsc`, open it with `docker exec -it amsc /bin/bash`, and return to `/shared-folder` before running commands.
 
 ## Linux with Apptainer
 
@@ -92,3 +101,4 @@ Then follow the same environment, compilation, and run commands listed above.
 - `Challenge1.pdf` — assignment requirements and filter definitions.
 - `Lab0/Lab0a_SetUp.md` — course environment setup instructions.
 - `Lab1/Lab1_IntroEigen.md` — Eigen and image handling with `stb`.
+- [LIS User Guide](https://www.ssisc.org/lis/lis-manual-en.pdf) — `lsolve` syntax and solver options.
